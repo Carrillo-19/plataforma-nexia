@@ -83,14 +83,21 @@ export async function register(_prev: ActionState, formData: FormData): Promise<
         return { status: "error", message: RATE_LIMIT_ERROR, values };
       }
       if (error.code !== "user_already_exists" && error.code !== "email_exists") {
-        console.error("[auth] signUp failed", { code: error.code ?? "unknown" });
+        // Sólo en el log del servidor; al cliente nunca se le envía el detalle.
+        console.error("[auth] signUp failed", {
+          name: error.name,
+          status: error.status,
+          code: error.code ?? "unknown",
+          message: error.message,
+        });
         return { status: "error", message: GENERIC_ERROR, values };
       }
       // Correo ya registrado: misma respuesta que un alta normal (anti-enumeración).
     }
 
     hasSession = Boolean(data.session);
-  } catch {
+  } catch (error) {
+    console.error("[auth] signUp threw", error instanceof Error ? { name: error.name, message: error.message } : error);
     return { status: "error", message: GENERIC_ERROR, values };
   }
 

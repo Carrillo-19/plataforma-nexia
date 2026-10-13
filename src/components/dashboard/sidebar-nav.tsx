@@ -27,7 +27,7 @@ type NavItem = {
 
 const NAV_ITEMS: readonly NavItem[] = [
   { href: "/dashboard", label: "Resumen", icon: LayoutDashboardIcon, exact: true },
-  { href: "/dashboard/inbox", label: "Bandeja", icon: InboxIcon, comingSoon: true },
+  { href: "/dashboard/inbox", label: "Bandeja", icon: InboxIcon },
   { href: "/dashboard/reservations", label: "Reservas", icon: CalendarDaysIcon, comingSoon: true },
   { href: "/dashboard/customers", label: "Clientes", icon: UsersIcon, comingSoon: true },
   { href: "/dashboard/resources", label: "Recursos", icon: BoxesIcon, comingSoon: true },

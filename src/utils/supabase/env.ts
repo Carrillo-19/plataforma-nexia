@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 const supabaseEnvSchema = z.object({
-  NEXT_PUBLIC_SUPABASE_URL: z.url({ protocol: /^https?$/ }),
+  // Debe ser la URL base del proyecto (https://<ref>.supabase.co), sin rutas
+  // como /rest/v1/: el SDK las añade y una ruta extra provoca 404 en Auth.
+  NEXT_PUBLIC_SUPABASE_URL: z
+    .url({ protocol: /^https?$/ })
+    .refine((value) => new URL(value).pathname === "/", "must be the project base URL without a path (e.g. remove /rest/v1/)"),
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().min(20),
 });
 
@@ -22,8 +26,8 @@ export function getSupabaseEnv(): SupabaseEnv {
   });
 
   if (!parsed.success) {
-    const missing = parsed.error.issues.map((issue) => issue.path.join(".")).join(", ");
-    throw new Error(`Invalid Supabase environment configuration: ${missing}`);
+    const details = parsed.error.issues.map((issue) => `${issue.path.join(".")}: ${issue.message}`).join("; ");
+    throw new Error(`Invalid Supabase environment configuration: ${details}`);
   }
 
   cachedEnv = parsed.data;

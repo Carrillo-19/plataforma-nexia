@@ -350,7 +350,10 @@ create policy users_update_role_by_admin on public.users
 grant select, insert, update, delete on public.customers     to authenticated;
 grant select, insert, update, delete on public.resources     to authenticated;
 grant select, insert, update, delete on public.reservations  to authenticated;
-grant select, insert, update, delete on public.conversations to authenticated;
+-- conversations: las crea el backend (service_role); el dashboard sólo cambia
+-- el modo bot / intervención humana (Fase 3).
+grant select, delete                 on public.conversations to authenticated;
+grant update (is_bot_active)         on public.conversations to authenticated;
 grant select, insert                 on public.messages      to authenticated;
 
 -- customers
@@ -402,9 +405,6 @@ create policy reservations_delete_admin on public.reservations
 create policy conversations_select on public.conversations
   for select to authenticated
   using (business_id = (select private.current_business_id()));
-create policy conversations_insert on public.conversations
-  for insert to authenticated
-  with check (business_id = (select private.current_business_id()));
 create policy conversations_update on public.conversations
   for update to authenticated
   using (business_id = (select private.current_business_id()))

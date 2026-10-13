@@ -7,3 +7,4 @@ export * from "./resource";
 export * from "./reservation";
 export * from "./conversation";
 export * from "./message";
+export * from "./inbox";
